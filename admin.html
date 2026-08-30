@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>报备管理后台 · 陪玩俱乐部</title>
+  <title>报备管理后台 · 天凛俱乐部</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -28,7 +28,7 @@
           <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
           <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
         </svg>
-        <h1>报备管理后台</h1>
+        <h1>天凛俱乐部 · 报备管理后台</h1>
       </div>
       <div class="header-actions">
         <span id="adminName" style="font-size:13px;color:var(--text-tertiary);">管理员</span>
@@ -57,14 +57,83 @@
           <div class="stat-change">元</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">总到手金额</div>
-          <div class="stat-value" id="statTotalActual">¥0.00</div>
-          <div class="stat-change" style="color:var(--chart-1);">提成 20%</div>
+          <div class="stat-label">陪陪总分成</div>
+          <div class="stat-value" id="statTotalPeipei">¥0.00</div>
+          <div class="stat-change" style="color:var(--chart-1);">按当前比例</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">活跃陪陪</div>
           <div class="stat-value" id="statActivePeipei">0</div>
           <div class="stat-change">人</div>
+        </div>
+      </div>
+
+      <!-- 分成配置面板 -->
+      <div class="card page-enter" style="margin-bottom: 16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <h3 class="card-title" style="margin:0;display:flex;align-items:center;gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            分成比例配置
+          </h3>
+          <button class="btn btn-sm" onclick="toggleSplitEdit()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+            修改比例
+          </button>
+        </div>
+
+        <!-- 当前配置展示 -->
+        <div style="overflow-x:auto;">
+          <table class="summary-table" style="margin-top:0;">
+            <thead>
+              <tr>
+                <th>角色</th>
+                <th style="text-align:right">陪陪</th>
+                <th style="text-align:right">场控</th>
+                <th style="text-align:right">直属</th>
+                <th style="text-align:right">俱乐部</th>
+                <th style="text-align:right">状态</th>
+              </tr>
+            </thead>
+            <tbody id="splitConfigBody">
+              <tr><td colspan="6" class="empty-cell">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 编辑面板 -->
+        <div id="splitEditPanel" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-color);">
+          <h4 style="margin:0 0 12px;font-size:14px;font-weight:500;color:var(--text-secondary);">编辑分成比例（小数形式，如 0.8 表示 80%）</h4>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:12px;margin-bottom:12px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">陪陪</label>
+              <input type="number" class="form-input" id="sPeipei" step="0.01" min="0" max="1" oninput="updateSplitPreview()" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">场控</label>
+              <input type="number" class="form-input" id="sChangkong" step="0.01" min="0" max="1" oninput="updateSplitPreview()" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">直属</label>
+              <input type="number" class="form-input" id="sZhishu" step="0.01" min="0" max="1" oninput="updateSplitPreview()" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">俱乐部</label>
+              <input type="number" class="form-input" id="sOwner" step="0.01" min="0" max="1" oninput="updateSplitPreview()" />
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span id="splitTotalPreview" style="font-size:13px;font-weight:500;">当前合计：100%</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-sm" onclick="resetSplitSettings()">恢复默认</button>
+              <button class="btn btn-primary btn-sm" onclick="saveSplitSettings()">保存设置</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -114,12 +183,15 @@
             </select>
           </div>
           <div class="filter-group">
-            <label>项目</label>
+            <label>场控</label>
+            <select class="form-select" id="fChangkong" onchange="applyFilters()">
+              <option value="">全部场控</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>单子项目</label>
             <select class="form-select" id="fProject" onchange="applyFilters()">
               <option value="">全部项目</option>
-              <option value="王者娱乐">王者娱乐</option>
-              <option value="相机">相机</option>
-              <option value="其他">其他</option>
             </select>
           </div>
         </div>
@@ -150,14 +222,16 @@
                 <th>板板</th>
                 <th>陪陪</th>
                 <th>直属</th>
-                <th>项目</th>
+                <th>场控</th>
+                <th>单子项目</th>
                 <th style="text-align:right">单价</th>
-                <th style="text-align:right">到手金额</th>
+                <th style="text-align:right">陪陪分成</th>
+                <th style="text-align:right">场控分成</th>
                 <th>操作</th>
               </tr>
             </thead>
             <tbody id="tableBody">
-              <tr><td colspan="9" class="empty-cell">暂无数据</td></tr>
+              <tr><td colspan="11" class="empty-cell">暂无数据</td></tr>
             </tbody>
           </table>
         </div>
@@ -180,12 +254,14 @@
                 <th>陪陪</th>
                 <th style="text-align:right">总单数</th>
                 <th style="text-align:right">总订单金额</th>
-                <th style="text-align:right">总到手金额</th>
-                <th style="text-align:right">平均单价</th>
+                <th style="text-align:right">陪陪分成</th>
+                <th style="text-align:right">场控分成</th>
+                <th style="text-align:right">直属分成</th>
+                <th style="text-align:right">俱乐部分成</th>
               </tr>
             </thead>
             <tbody id="summaryBody">
-              <tr><td colspan="5" class="empty-cell">暂无数据</td></tr>
+              <tr><td colspan="7" class="empty-cell">暂无数据</td></tr>
             </tbody>
           </table>
         </div>

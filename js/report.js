@@ -1,5 +1,6 @@
 // ========================================
 // 填报页逻辑
+// 天凛俱乐部 · 报备管理系统
 // ========================================
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -7,8 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const dateInput = document.getElementById('rDate');
   if (dateInput) dateInput.value = getToday();
 
-  // 初始化陪陪自动补全
-  updatePeipeiDatalist();
+  // 初始化自动补全
+  updateDatalists();
 });
 
 function updatePreview() {
@@ -18,8 +19,8 @@ function updatePreview() {
   if (!priceInput || !previewEl) return;
 
   const price = parseFloat(priceInput.value) || 0;
-  const actual = Math.round(price * 0.8 * 100) / 100;
-  previewEl.textContent = '¥' + actual.toFixed(2);
+  const split = calculateSplit(price);
+  previewEl.textContent = '¥' + split.peipei.toFixed(2);
 
   if (price <= 0 && priceInput.value !== '') {
     hintEl.classList.add('error');
@@ -30,11 +31,17 @@ function updatePreview() {
   }
 }
 
-function updatePeipeiDatalist() {
-  const dl = document.getElementById('peipeiList');
-  if (!dl) return;
-  const peipeis = getUniquePeipeis();
-  dl.innerHTML = peipeis.map(p => '<option value="' + escapeHtml(p) + '">').join('');
+function updateDatalists() {
+  const peipeiDl = document.getElementById('peipeiList');
+  const changkongDl = document.getElementById('changkongList');
+  if (peipeiDl) {
+    const peipeis = getUniquePeipeis();
+    peipeiDl.innerHTML = peipeis.map(p => '<option value="' + escapeHtml(p) + '">').join('');
+  }
+  if (changkongDl) {
+    const changkongs = getUniqueChangkongs();
+    changkongDl.innerHTML = changkongs.map(c => '<option value="' + escapeHtml(c) + '">').join('');
+  }
 }
 
 function handleReportSubmit(e) {
@@ -45,27 +52,31 @@ function handleReportSubmit(e) {
     return;
   }
 
-  const actual = Math.round(price * 0.8 * 100) / 100;
+  const split = calculateSplit(price);
   const report = {
     id: getNextId(),
     date: document.getElementById('rDate').value,
     banban: document.getElementById('rBanban').value.trim(),
     peipei: document.getElementById('rPeipei').value.trim(),
     zhishu: document.getElementById('rZhishu').value.trim(),
+    changkong: document.getElementById('rChangkong').value.trim(),
     project: document.getElementById('rProject').value.trim(),
     unit_price: price,
-    actual_amount: actual,
+    split_peipei: split.peipei,
+    split_changkong: split.changkong,
+    split_zhishu: split.zhishu,
+    split_owner: split.owner,
     created_at: new Date().toISOString()
   };
 
   addReport(report);
-  showToast('报备提交成功！到手金额 ¥' + actual.toFixed(2), 'success');
+  showToast('报备提交成功！陪陪到手 ¥' + split.peipei.toFixed(2), 'success');
 
   // 重置表单
   document.getElementById('reportForm').reset();
   document.getElementById('rDate').value = getToday();
   updatePreview();
-  updatePeipeiDatalist();
+  updateDatalists();
 
   // 清空粘贴区
   const pasteArea = document.getElementById('pasteArea');
@@ -101,6 +112,7 @@ function parseAndFill() {
   if (result.banban) document.getElementById('rBanban').value = result.banban;
   if (result.peipei) document.getElementById('rPeipei').value = result.peipei;
   if (result.zhishu) document.getElementById('rZhishu').value = result.zhishu;
+  if (result.changkong) document.getElementById('rChangkong').value = result.changkong;
   if (result.project) document.getElementById('rProject').value = result.project;
   if (result.unit_price) {
     document.getElementById('rPrice').value = result.unit_price;
@@ -113,6 +125,7 @@ function parseAndFill() {
   if (result.banban) filled.push('板板');
   if (result.peipei) filled.push('陪陪');
   if (result.zhishu) filled.push('直属');
+  if (result.changkong) filled.push('场控');
   if (result.project) filled.push('单子项目');
   if (result.unit_price) filled.push('单价');
 
@@ -126,13 +139,14 @@ function parseAndFill() {
 /**
  * 解析报备文本
  * 支持格式：
+ * 接单报备格式
  * 日期：8.30
  * 板板：不知道
  * 陪陪：江浩
  * 直属：纯忌
+ * 场控：小白
  * 单子项目：相机
  * 单价：52
- * 到手：52*0.8=41.6
  */
 function parseReportText(text) {
   const result = {};
@@ -144,6 +158,7 @@ function parseReportText(text) {
     '板板': ['板板', '老板', '客户', 'banban'],
     '陪陪': ['陪陪', '陪玩', 'peipei'],
     '直属': ['直属', '上级', 'zhishu'],
+    '场控': ['场控', '场控人员', 'changkong', '控场'],
     '单子项目': ['单子项目', '项目', '游戏', 'project'],
     '单价': ['单价', '价格', '金额', 'unit_price', 'price'],
   };
@@ -180,6 +195,9 @@ function parseReportText(text) {
             case '直属':
               result.zhishu = cleanValue;
               break;
+            case '场控':
+              result.changkong = cleanValue;
+              break;
             case '单子项目':
               result.project = cleanValue;
               break;
@@ -196,7 +214,7 @@ function parseReportText(text) {
 
   // 至少识别到一个有效字段才算成功
   const hasAny = result.date || result.banban || result.peipei ||
-                 result.zhishu || result.project || result.unit_price;
+                 result.zhishu || result.changkong || result.project || result.unit_price;
   return hasAny ? result : null;
 }
 

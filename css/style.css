@@ -400,11 +400,31 @@ tr:hover .row-actions, tr:focus-within .row-actions { opacity: 1; }
   min-height: 100px;
 }
 
-/* ---- Dark mode paste area ---- */
+/* ---- Split config panel ---- */
+#splitEditPanel {
+  animation: fadeIn 0.2s var(--ease-out);
+}
+
+/* ---- Dark mode support ---- */
 @media (prefers-color-scheme: dark) {
-  #pasteArea {
-    background: rgba(26, 28, 35, 0.8);
-    color: #e8e8e8;
-    border-color: #2a2d35;
+  body { background: #0f1115; color: #e8e8e8; }
+  body::before {
+    background:
+      linear-gradient(135deg, transparent 60%, rgba(37, 99, 235, 0.06) 60%),
+      linear-gradient(315deg, transparent 55%, rgba(147, 51, 234, 0.04) 55%),
+      radial-gradient(ellipse 800px 600px at 50% 40%, rgba(37, 99, 235, 0.04) 0%, transparent 70%);
   }
+  .geo-bg::before {
+    background-image:
+      repeating-linear-gradient(30deg, transparent, transparent 40px, rgba(37, 99, 235, 0.05) 40px, rgba(37, 99, 235, 0.05) 41px),
+      repeating-linear-gradient(-30deg, transparent, transparent 40px, rgba(147, 51, 234, 0.03) 40px, rgba(147, 51, 234, 0.03) 41px);
+  }
+  .app-header { background: rgba(15, 17, 21, 0.85); border-color: #2a2d35; }
+  .card, .stat-card, .login-card { background: rgba(26, 28, 35, 0.75); border-color: #2a2d35; }
+  .form-input, .form-select { background: rgba(26, 28, 35, 0.8); border-color: #2a2d35; color: #e8e8e8; }
+  .btn { background: rgba(26, 28, 35, 0.7); border-color: #2a2d35; color: #e8e8e8; }
+  .data-table th, .data-table td { border-color: #2a2d35; }
+  .data-table tr:hover { background: rgba(255,255,255,0.03); }
+  .geo-wave { background: linear-gradient(to top, rgba(37, 99, 235, 0.04) 0%, transparent 100%); }
+  #pasteArea { background: rgba(26, 28, 35, 0.8); color: #e8e8e8; border-color: #2a2d35; }
 }
