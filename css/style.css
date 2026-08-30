@@ -391,3 +391,20 @@ tr:hover .row-actions, tr:focus-within .row-actions { opacity: 1; }
   .data-table tr:hover { background: rgba(255,255,255,0.03); }
   .geo-wave { background: linear-gradient(to top, rgba(37, 99, 235, 0.04) 0%, transparent 100%); }
 }
+
+/* ---- Paste area ---- */
+#pasteArea {
+  font-family: var(--kimi-font-mono, monospace);
+  font-size: 13px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+
+/* ---- Dark mode paste area ---- */
+@media (prefers-color-scheme: dark) {
+  #pasteArea {
+    background: rgba(26, 28, 35, 0.8);
+    color: #e8e8e8;
+    border-color: #2a2d35;
+  }
+}

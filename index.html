@@ -42,6 +42,29 @@
     </header>
 
     <main style="max-width: 520px; margin: 0 auto; padding: 24px 20px 40px;">
+      <!-- 快速粘贴识别 -->
+      <div class="card page-enter" style="margin-bottom: 16px;">
+        <h2 class="card-title" style="display:flex;align-items:center;gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+          </svg>
+          快速粘贴识别
+        </h2>
+        <textarea class="form-input" id="pasteArea" rows="5" placeholder="在此粘贴报备文本，系统将自动识别填充" style="resize:vertical;font-size:14px;line-height:1.6;"></textarea>
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end;">
+          <button type="button" class="btn btn-sm" onclick="clearPaste()">清空</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="parseAndFill()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/>
+              <polyline points="1 20 1 14 7 14"/>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+            识别填充
+          </button>
+        </div>
+      </div>
+
       <div class="card page-enter" style="margin-bottom: 16px;">
         <h2 class="card-title" style="display:flex;align-items:center;gap:8px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -55,39 +78,34 @@
 
         <form id="reportForm" onsubmit="handleReportSubmit(event)">
           <div class="form-group">
-            <label class="form-label">接单日期 <span style="color:var(--danger)">*</span></label>
+            <label class="form-label">日期</label>
             <input type="date" class="form-input" id="rDate" required />
           </div>
 
           <div class="form-group">
-            <label class="form-label">板板 <span style="color:var(--danger)">*</span></label>
-            <input type="text" class="form-input" id="rBanban" placeholder="请输入客户昵称" required />
+            <label class="form-label">板板</label>
+            <input type="text" class="form-input" id="rBanban" placeholder="请输入板板" required />
           </div>
 
           <div class="form-group">
-            <label class="form-label">陪陪<span style="color:var(--danger)">*</span></label>
-            <input type="text" class="form-input" id="rPeipei" placeholder="请输入陪玩昵称" required list="peipeiList" />
+            <label class="form-label">陪陪</label>
+            <input type="text" class="form-input" id="rPeipei" placeholder="请输入陪陪" required list="peipeiList" />
             <datalist id="peipeiList"></datalist>
           </div>
 
           <div class="form-group">
-            <label class="form-label">直属上级</label>
-            <input type="text" class="form-input" id="rZhishu" value="江浩" placeholder="默认为江浩" />
+            <label class="form-label">直属</label>
+            <input type="text" class="form-input" id="rZhishu" placeholder="请输入直属" required />
           </div>
 
           <div class="form-group">
-            <label class="form-label">单子项目 <span style="color:var(--danger)">*</span></label>
-            <select class="form-select" id="rProject" required>
-              <option value="">请选择项目</option>
-              <option value="王者娱乐">王者娱乐</option>
-              <option value="相机">相机</option>
-              <option value="其他">其他</option>
-            </select>
+            <label class="form-label">单子项目</label>
+            <input type="text" class="form-input" id="rProject" placeholder="请输入单子项目" required />
           </div>
 
           <div class="form-group">
-            <label class="form-label">单价（元） <span style="color:var(--danger)">*</span></label>
-            <input type="number" class="form-input" id="rPrice" placeholder="0.00" step="0.01" min="0.01" required oninput="updatePreview()" />
+            <label class="form-label">单价</label>
+            <input type="number" class="form-input" id="rPrice" placeholder="请输入单价" step="0.01" min="0.01" required oninput="updatePreview()" />
             <div class="form-hint" id="priceHint">单价必须大于 0</div>
           </div>
 
