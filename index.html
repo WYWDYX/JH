@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>陪玩俱乐部 · 报备填报</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 游戏几何背景装饰 -->
+  <div class="geo-bg"></div>
+  <div class="geo-shape geo-hex-1"></div>
+  <div class="geo-shape geo-hex-2"></div>
+  <div class="geo-shape geo-tri-1"></div>
+  <div class="geo-shape geo-dia-1"></div>
+  <div class="geo-shape geo-ring-1"></div>
+  <div class="geo-shape geo-cross-1"></div>
+  <div class="geo-wave"></div>
+
+  <!-- Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <div class="page-wrap">
+    <header class="app-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        <h1>陪玩俱乐部 · 报备填报</h1>
+      </div>
+      <a href="login.html" class="btn btn-ghost">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        管理后台
+      </a>
+    </header>
+
+    <main style="max-width: 520px; margin: 0 auto; padding: 24px 20px 40px;">
+      <div class="card page-enter" style="margin-bottom: 16px;">
+        <h2 class="card-title" style="display:flex;align-items:center;gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="9" y1="12" x2="15" y2="12"/>
+            <line x1="9" y1="16" x2="15" y2="16"/>
+            <line x1="9" y1="8" x2="11" y2="8"/>
+          </svg>
+          填写报备信息
+        </h2>
+
+        <form id="reportForm" onsubmit="handleReportSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">接单日期 <span style="color:var(--danger)">*</span></label>
+            <input type="date" class="form-input" id="rDate" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">板板（客户昵称） <span style="color:var(--danger)">*</span></label>
+            <input type="text" class="form-input" id="rBanban" placeholder="请输入客户昵称" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">陪陪（陪玩昵称） <span style="color:var(--danger)">*</span></label>
+            <input type="text" class="form-input" id="rPeipei" placeholder="请输入陪玩昵称" required list="peipeiList" />
+            <datalist id="peipeiList"></datalist>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">直属上级</label>
+            <input type="text" class="form-input" id="rZhishu" value="江浩" placeholder="默认为江浩" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">单子项目 <span style="color:var(--danger)">*</span></label>
+            <select class="form-select" id="rProject" required>
+              <option value="">请选择项目</option>
+              <option value="王者娱乐">王者娱乐</option>
+              <option value="相机">相机</option>
+              <option value="其他">其他</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">单价（元） <span style="color:var(--danger)">*</span></label>
+            <input type="number" class="form-input" id="rPrice" placeholder="0.00" step="0.01" min="0.01" required oninput="updatePreview()" />
+            <div class="form-hint" id="priceHint">单价必须大于 0</div>
+          </div>
+
+          <div class="amount-preview">
+            <span class="amount-preview-label">到手金额预览</span>
+            <span class="amount-preview-value" id="previewAmount">¥0.00</span>
+          </div>
+
+          <div style="margin-top: 24px; text-align: center;">
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+              提交报备
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div style="text-align: center; color: var(--text-quaternary); font-size: 12px;">
+        提交后数据将自动计算并保存 · 管理后台可查看汇总
+      </div>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/report.js"></script>
+</body>
+</html>
